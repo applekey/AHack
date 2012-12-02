@@ -105,12 +105,9 @@ var medical = io.sockets.on('connection', function (socket) {
 
  function PostQuestion(question,callback)
  {
-    var questionSchema = new mongoose.Schema({
-    Comments:String,
-    CommentDate:Date
-    });
     var Question = db.model('Questions', questionSchema);
     newQuestion = new Question({
+      organziation:question.Organization, 
       Comments:question.Comments,
       CommentDate:question.CommentDate
     });
@@ -207,7 +204,7 @@ var medical = io.sockets.on('connection', function (socket) {
    
 
     var question = db.model('Questions', questionSchema);
-    var questionsFromDB = question.find({organziation:currentInstitution}).sort('CommentDate').limit(5).exec(function(err,questions)
+    var questionsFromDB = question.find({organziation:currentInstitution}).sort('-CommentDate').limit(5).exec(function(err,questions)
       {
         //console.log(questions);  
         callback(questions);

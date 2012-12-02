@@ -33,7 +33,7 @@
         }); 
 
         socket.on('updateFaqs', function (data) {
-          for (var i = data.length - 1; i >= 0; i--) {
+          for (var i =0; i <data.length; i++) {
             $("#questionDetails ul").append('<li>'
               +data[i].Comments
               +'<br>'
@@ -181,7 +181,7 @@
         var text = $('textarea#new_message').val();
 
           var question = {
-          organization:currentInstitution,
+          Organization:currentInstitution,
           Comments:text,
           CommentDate:getCurrentDate()
         };

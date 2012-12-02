@@ -7,7 +7,50 @@
 
       var listOfMarkers = new Array();
 
-      var currentInstitution = 'UofT';
+      var currentInstitution = 'Waterloo';
+
+      InitlizeSockets();
+      function InitlizeSockets()
+      {
+        socket.on('explaination',function(data){
+          SetExplainationText(data[0]);
+          });
+
+        socket.on('medicalLocations', function (data) {
+        CreateGoogleLocations(data, function(error,result){
+           if(!error)
+           {
+              for(var i= 0;i<result.length;i++)
+              {
+               AddMarker(result[i],map);
+              }
+           }
+          });
+        }); 
+
+        socket.on('updateFaqs', function (data) {
+          $("#questionDetails").append('<ul>');
+          for (var i = data.length - 1; i >= 0; i--) {
+            $("#questionDetails ul").append('<li>'
+              +data[i].Comments
+              +'<br>'
+              +data[i].CommentDate);
+            };
+          });
+
+
+        socket.on('postSuccessful', function(data){
+          // this can be from anybody
+
+          $('#questionDetails li').first().remove();
+
+          $("#questionDetails ul").prepend('<li>'
+            +data.Comments
+            +'<br>'
+            +data.CommentDate
+            +'</br>');
+          });
+      }
     
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -15,9 +58,7 @@
       {
         if(firstTabInitlized === false)
         {
-          socket.on('explaination',function(data){
-          SetExplainationText(data[0]);
-          });
+          
           socket.emit('getExplaination',currentInstitution);
 
           firstTabInitlized = true;
@@ -40,6 +81,8 @@
       }
 
 /////////////////////////////////////////////////////////////////
+      
+      $("#mapDetails").append('<ul></ul>');
       function InitizeSecondTab() {
         if(secondTabInitlized === false)
         {
@@ -52,29 +95,21 @@
             map = new google.maps.Map(blah,
             mapOptions);
 
-            $("#mapDetails").append('<ul>');
+            
+            //$("#mapDetails ul").empty();
             
             // create the request
-            var result = socket.on('medicalLocations', function (data) {
-            CreateGoogleLocations(data, function(error,result){
-               if(!error)
-               {
-                  for(var i= 0;i<result.length;i++)
-                  {
-                   AddMarker(result[i],map);
-                  }
-               }
-              });
-            }); 
+      
 
-            socket.emit('getMedicalLocations');
+            socket.emit('getMedicalLocations',currentInstitution);
 
             $("#mapDetails li").live('click', function(e) { 
               console.log($(this).index());
               var listIndex = $(this).index();
               ActivateMarker(listIndex);
               window.location.href = '#BottomOfMap';
-            })
+            });
+
             secondTabInitlized = true; 
         }
       }
@@ -87,12 +122,7 @@
         {
           var recievedLocation = locations[i];
           googleLocations[i] = new google.maps.LatLng(recievedLocation.location[0].xLocation,recievedLocation.location[0].yLocation);
-          $("#mapDetails ul").append('<li><div id="myhero" class="hero-unit">'
-            +recievedLocation.Name
-            +'<br>'+recievedLocation.Address
-            +'<br>'+recievedLocation.rating
-            +'<br>'+recievedLocation.waitTime
-            +'</div></li>'
+          $("#mapDetails ul").append('<li>'+i+'</li>'
             );
         } 
         callback(null,googleLocations);
@@ -136,30 +166,8 @@
 
         if(thirdTabInitlized === false)
         {
-          socket.on('updateFaqs', function (data) {
-          $("#questionDetails").append('<ul>');
-          for (var i = data.length - 1; i >= 0; i--) {
-            $("#questionDetails ul").append('<li>'
-              +data[i].Comments
-              +'<br>'
-              +data[i].CommentDate);
-            };
-          });
+          
           socket.emit('getLatestQuestions');
-
-          socket.on('postSuccessful', function(data){
-          // this can be from anybody
-
-          $('#questionDetails li').first().remove();
-
-          $("#questionDetails ul").prepend('<li>'
-            +data.Comments
-            +'<br>'
-            +data.CommentDate
-            +'</br>');
-          });
-       
-
           thirdTabInitlized = true;
         }
       }
@@ -204,6 +212,7 @@
     firstTabInitlized = false;
     secondTabInitlized = false;
     thirdTabInitlized = false;
+    $("#mapDetails ul").empty();
   }
 
 

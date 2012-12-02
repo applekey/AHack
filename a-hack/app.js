@@ -1,7 +1,5 @@
-
 var express = require('express'),
     routes = require('./routes'),
-
     http = require('http'),
     path = require('path');
 
@@ -13,6 +11,7 @@ var app = require('express')()
   server.listen(3000);
 
 // Configuration
+io.set('log level',1);
 
 app.configure(function() {
     app.set('port', process.env.PORT || 3000);
@@ -33,30 +32,39 @@ app.configure('development', function() {
 // Routes
 
 app.get('/home', routes.index);
-
 app.get('/english', routes.english);
-
 app.get('/medical', routes.medical);
 
-io.set('log level',1);
- // var testLocations = Array();
- //      testLocations[0] = {x:43.6617, y:-79.3951};
- //      testLocations[1] = {x:43.6517, y:-79.3951};
- //      testLocations[2] = {x:43.6217, y:-79.3951};
- //      testLocations[3] = {x:43.6617, y:-79.3951};
- //      testLocations[4] = {x:43.6317, y:-79.3951};
 
+ var testLocations = Array();
+      testLocations[0] = {x:43.6617, y:-79.3951};
+      testLocations[1] = {x:43.6517, y:-79.3951};
+      testLocations[2] = {x:43.6217, y:-79.3951};
+      testLocations[3] = {x:43.6617, y:-79.3951};
+      testLocations[4] = {x:43.6317, y:-79.3951};
+////////////////////////////////////////////////////////////////////
+
+  var locationSchema = new mongoose.Schema({
+     xLocation:Number,
+     yLocation:Number
+     });
+
+  var completeGoogleMapsLocation = new mongoose.Schema({
+     organziation:String,
+     Name: String,
+     Address: String,
+     location: [locationSchema],
+     rating: Number,
+     waitTime: Number,
+     comments: Array
+     });
+
+
+//////////////////////////////////////////////////////////////////////
 
 var db = mongoose.connect('mongodb://applekey:poppy222@alex.mongohq.com:10041/applekeyTest');
 
 var medical = io.sockets.on('connection', function (socket) {
-
-    socket.on('getMedicalLocations',function(){
-      FindMapLocationRecords(function(medicalLocations){
-      console.log(medicalLocations);
-      medical.emit('medicalLocations', medicalLocations);
-      });
-    });
 
     socket.on('getExplaination',function(currentInstitution){
       getExplaination(currentInstitution,function(explainations){
@@ -64,9 +72,15 @@ var medical = io.sockets.on('connection', function (socket) {
       socket.emit('explaination',explainations);
       });
     });
-  
-    socket.on('getLatestQuestions',function(){
-      console.log('getting');
+
+    socket.on('getMedicalLocations',function(currentInstitution){
+      FindMapLocationRecords(currentInstitution,function(medicalLocations){
+      console.log(medicalLocations);
+      medical.emit('medicalLocations', medicalLocations);
+      });
+    });
+
+    socket.on('getLatestQuestions',function(currentInstitution){
       getQuestionsAndAnswers(function(questions){
       console.log(questions);
       socket.emit('updateFaqs',questions);
@@ -96,13 +110,6 @@ var medical = io.sockets.on('connection', function (socket) {
     callback();
  }
 
- function UpdateLog()
- {
-   //console.log('here');
-   io.sockets.emit('updateFaqs',{faq:'updated'});
- }
-
-  //DeleteAllRecords();
   //InsertDummyRecords();
 
  function DeleteAllRecords()
@@ -113,6 +120,7 @@ var medical = io.sockets.on('connection', function (socket) {
      });
 
     var completeGoogleMapsLocation = new mongoose.Schema({
+
      location: [locationSchema],
      rating: Number,
      waitTime: Number,
@@ -123,67 +131,38 @@ var medical = io.sockets.on('connection', function (socket) {
 
    var collection = mongoose.model('CompleteGoogleMaps',completeGoogleMapsLocation);
    collection.remove({},function(error){});
-
  }
 
- function FindMapLocationRecords(callback)
+ function FindMapLocationRecords(currentInstitution,callback)
  {
-
-   var locationSchema = new mongoose.Schema({
-     xLocation:Number,
-     yLocation:Number
-     });
-
-    var completeGoogleMapsLocation = new mongoose.Schema({
-     Name: String,
-     Address: String,
-     location: [locationSchema],
-     rating: Number,
-     waitTime: Number,
-     comments: Array
-     });
 
     var CompleteGoogleMaps = db.model('CompleteGoogleMaps', completeGoogleMapsLocation);
 
-
-    CompleteGoogleMaps.find(function(err,questions)
+    CompleteGoogleMaps.find({organziation:currentInstitution},function(err,questions)
       {
-        //console.log(questions);  
         callback(questions);
       });
-
  }
 
+ //InsertDummyRecords();
  function InsertDummyRecords()
   {
-    var locationSchema = new mongoose.Schema({
-     xLocation:Number,
-     yLocation:Number
-     });
-
-    var completeGoogleMapsLocation = new mongoose.Schema({
-     Name: String,
-     Address: String,
-     location: [locationSchema],
-     rating: Number,
-     waitTime: Number,
-     comments: Array
-     });
 
     var CompleteGoogleMaps = db.model('CompleteGoogleMaps', completeGoogleMapsLocation);
     
     for (var i = testLocations.length - 1; i >= 0; i--) {
-      var silence = new CompleteGoogleMaps(
+      var locations = new CompleteGoogleMaps(
      { 
-       Name:'helloworld',
-       Address:'123 Sesmie Street',
+       organziation:'Waterloo',
+       Name:'waterloo',
+       Address:'123 waterloo street',
        rating: 6,
        waitTime: 7,
        comments: ['Array']
      });
-     silence.location.push({xLocation:testLocations[i].x,yLocation:testLocations[i].y});
+     locations.location.push({xLocation:testLocations[i].x,yLocation:testLocations[i].y});
      
-     silence.save(function (err, fluffy) {
+     locations.save(function (err, data) {
      }); 
     };
   }
@@ -261,13 +240,13 @@ var medical = io.sockets.on('connection', function (socket) {
   function getExplaination(currentInstitution,callback)
   {
      var explainationSchema = new mongoose.Schema({
+      organziation:String,
       explanationHtml:String,
       lastTimeUpdated: Date
       });
 
-     console.log(currentInstitution);
 
-      var Explaination = db.model('Explaination', explainationSchema);
+      var Explaination = db.model('Explaination',explainationSchema);
     Explaination.find({organziation:currentInstitution},function(error,results){
       if(error)
         return;

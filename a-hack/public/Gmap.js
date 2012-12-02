@@ -1,60 +1,80 @@
       var map;
       var socket =io.connect('http://localhost/');
 
+      var firstTabInitlized = false;
+      var secondTabInitlized = false;
+      var thirdTabInitlized = false;
+
       var listOfMarkers = new Array();
-      
-      $("#mapDetails").append('<ul>');
+    
 
-      $("#mapDetails li").live('click', function(e) { 
-        console.log($(this).index());
-        var listIndex = $(this).index();
-        ActivateMarker(listIndex);
-        window.location.href = '#BottomOfMap';
-
-      })
-
+////////////////////////////////////////////////////////////////////////////////////////
       function InitilizeFirstTab()
       {
-        SetExplainationText();
-      }
-
-      function InitizeSecondTab() {
-        var mapOptions = {
-        center: new google.maps.LatLng(43.6617, -79.3951),
-        zoom: 16,
-        mapTypeId: google.maps.MapTypeId.ROADMAP  
-        };
-        var blah = document.getElementById("map_canvas");
-        map = new google.maps.Map(blah,
-        mapOptions);
-
-        $("#mapDetails").append('<ul>');
-        
-        // create the request
-        socket.emit('getMedicalLocations');
-        var result = socket.on('medicalLocations', function (data) {
-        CreateGoogleLocations(data, function(error,result){
-           if(!error)
-           {
-              for(var i= 0;i<result.length;i++)
-              {
-               AddMarker(result[i],map);
-              }
-           }
+        if(firstTabInitlized === false)
+        {
+          socket.emit('getExplaination');
+          socket.on('explaination',function(data){
+          console.log(data);
+          SetExplainationText(data[0]);
           });
-        });  
+          firstTabInitlized = true;
+        }
       }
 
-      $("#questionDetails").append('<ul>');
 
-      function AskAQuestion(){
-       socket.emit('askAQuestion');
-       socket.on('updateFaqs', function (data) {
-       for (var i = data.length - 1; i >= 0; i--) {
-        $("#questionDetails ul").append('<li>'+data[i].Comments+'<br>'+data[i].CommentDate);
-       };
+      function SetExplainationText(explainationData)
+      {
+        var organization = explainationData.organziation;
+        var explainHtml= explainationData.explanationHtml;
+        var lastTimeUpdated = explainationData.lastTimeUpdated;
 
-       });
+        var newHTML = '<hero-unit>'
+        +'<h1>'+organization +'</h1>'
+        +'<p>' + explainHtml + '</p>'
+        + '<h3>' + lastTimeUpdated +'</h3>'
+        '</hero-unit>';
+      
+        document.getElementById('ExplaninationText').innerHTML = newHTML;
+      }
+
+/////////////////////////////////////////////////////////////////
+      function InitizeSecondTab() {
+        if(secondTabInitlized === false)
+        {
+            var mapOptions = {
+            center: new google.maps.LatLng(43.6617, -79.3951),
+            zoom: 16,
+            mapTypeId: google.maps.MapTypeId.ROADMAP  
+            };
+            var blah = document.getElementById("map_canvas");
+            map = new google.maps.Map(blah,
+            mapOptions);
+
+            $("#mapDetails").append('<ul>');
+            
+            // create the request
+            socket.emit('getMedicalLocations');
+            var result = socket.on('medicalLocations', function (data) {
+            CreateGoogleLocations(data, function(error,result){
+               if(!error)
+               {
+                  for(var i= 0;i<result.length;i++)
+                  {
+                   AddMarker(result[i],map);
+                  }
+               }
+              });
+            }); 
+
+            $("#mapDetails li").live('click', function(e) { 
+              console.log($(this).index());
+              var listIndex = $(this).index();
+              ActivateMarker(listIndex);
+              window.location.href = '#BottomOfMap';
+            })
+            secondTabInitlized = true; 
+        }
       }
 
       function CreateGoogleLocations(locations,callback)
@@ -70,6 +90,7 @@
             +'<br>'+recievedLocation.Address
             +'<br>'+recievedLocation.rating
             +'<br>'+recievedLocation.waitTime
+            +'</div></li>'
             );
         } 
         callback(null,googleLocations);
@@ -100,12 +121,6 @@
 
       }
 
-      function SetExplainationText()
-      {
-        var newHTML = "<span style='color:#0000FF'>" + 'This text comes from the db' + "</span>";
-        document.getElementById('ExplaninationText').innerHTML = newHTML;
-      }
-
       function ActivateMarker(infoWindowNumber)
       {
         var marker = listOfMarkers[infoWindowNumber];
@@ -119,7 +134,7 @@
       var href = e.target.href;
         if(href.substr(href.length - 1)==='3')
         {
-          AskAQuestion();
+          InitilizeThirdTab();
         }
         else if(href.substr(href.length - 1)==='2')
         {
@@ -134,6 +149,31 @@
 
         }
       })
+
+      
+
+/////////////////////////////////////////////////////////////////      
+      function InitilizeThirdTab(){
+
+        if(thirdTabInitlized === false)
+        {
+          socket.on('updateFaqs', function (data) {
+          $("#questionDetails").append('<ul>');
+          for (var i = data.length - 1; i >= 0; i--) {
+            $("#questionDetails ul").append('<li>'+data[i].Comments+'<br>'+data[i].CommentDate);
+          };
+          });
+          socket.emit('getLatestQuestions');
+          thirdTabInitlized = true;
+        }
+      }
+
+
+
+      
+
+
+      
 
 
 

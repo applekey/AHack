@@ -47,27 +47,32 @@ io.set('log level',1);
       testLocations[4] = {x:43.6317, y:-79.3951};
 
 
- var db =  mongoose.connect('mongodb://applekey:poppy222@alex.mongohq.com:10041/applekeyTest');
+var db =  mongoose.connect('mongodb://applekey:poppy222@alex.mongohq.com:10041/applekeyTest');
 
-var medical = io.sockets
-  .on('connection', function (socket) {
-     socket.on('getMedicalLocations',function(){
+var medical = io.sockets.on('connection', function (socket) {
+
+    socket.on('getMedicalLocations',function(){
       FindMapLocationRecords(function(medicalLocations){
+      console.log(medicalLocations);
       medical.emit('medicalLocations', medicalLocations);
+      });
     });
 
     socket.on('getExplaination',function(){
-      getExplaination(function(results){
-      socket.emit('recieveExplaination',results);
-      })
-    });
-  
-    socket.on('askAQuestion',function(data){
-      getQuestionsAndAnswers(function(data){
-      socket.emit('updateFaqs',data);
+      getExplaination(function(explainations){
+      console.log(explainations);
+      socket.emit('explaination',explainations);
       });
     });
-    })
+  
+    socket.on('getLatestQuestions',function(){
+      console.log('getting');
+      getQuestionsAndAnswers(function(questions){
+      console.log(questions);
+      socket.emit('updateFaqs',questions);
+      });
+    });
+
   }); 
 
  function UpdateLog()
@@ -122,7 +127,7 @@ var medical = io.sockets
 
     CompleteGoogleMaps.find(function(err,questions)
       {
-        console.log(questions);  
+        //console.log(questions);  
         callback(questions);
       });
 
@@ -202,7 +207,7 @@ var medical = io.sockets
     var question = db.model('Questions', questionSchema);
     var questionsFromDB = question.find(function(err,questions)
       {
-        console.log(questions);  
+        //console.log(questions);  
         callback(questions);
       });
     //console.log(questionsFromDB);

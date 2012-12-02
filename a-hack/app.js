@@ -158,9 +158,9 @@ var medical = io.sockets.on('connection', function (socket) {
 
     var CompleteGoogleMaps = db.model('CompleteGoogleMaps', completeGoogleMapsLocation);
 
-    CompleteGoogleMaps.find({organziation:currentInstitution},function(err,questions)
+    CompleteGoogleMaps.find({organziation:currentInstitution},function(err,medicalLocations)
       {
-        callback(questions);
+        callback(medicalLocations);
       });
  }
 

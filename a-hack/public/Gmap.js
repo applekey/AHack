@@ -136,12 +136,19 @@
 
       function CreateGoogleLocations(locations,callback)
       {
-        var googleLocations = new Array();
+        var pinuplocation = new Array();
         //console.log(locations);
         for(var i = 0; i<locations.length;i++)
         {
           var recievedLocation = locations[i];
-          googleLocations[i] = new google.maps.LatLng(recievedLocation.location[0].xLocation,recievedLocation.location[0].yLocation);
+          
+          var popUPInformation = {
+            googleLocation:new google.maps.LatLng(recievedLocation.location[0].xLocation,recievedLocation.location[0].yLocation),
+            contactInformation:'6477873234'
+          };
+
+          pinuplocation[i] = popUPInformation;
+          
           $("#mapDetails ul").append('<li><div id="myhero" class="hero-unit">'
             +'Name: '+recievedLocation.Name
             +'<br>'+'Addr: '+recievedLocation.Address
@@ -150,12 +157,12 @@
             +'</div></li>'
             );
         } 
-        callback(null,googleLocations);
+        callback(null,pinuplocation);
       }
       
       function AddMarker(location,map){
         var marker = new google.maps.Marker({
-        position: location,
+        position: location.googleLocation,
         title:"Hello World!"
         });
         marker.setMap(map);

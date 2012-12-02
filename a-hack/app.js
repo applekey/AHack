@@ -227,7 +227,7 @@ var medical = io.sockets.on('connection', function (socket) {
     });
 
     var question = db.model('Questions', questionSchema);
-    var questionsFromDB = question.find(function(err,questions)
+    var questionsFromDB = question.find().sort('CommentDate').limit(5).exec(function(err,questions)
       {
         //console.log(questions);  
         callback(questions);
@@ -272,7 +272,6 @@ var medical = io.sockets.on('connection', function (socket) {
       if(error)
         return;
       callback(results);
-     
     })
   }
 

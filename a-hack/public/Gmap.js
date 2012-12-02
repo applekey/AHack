@@ -140,15 +140,26 @@
           socket.on('updateFaqs', function (data) {
           $("#questionDetails").append('<ul>');
           for (var i = data.length - 1; i >= 0; i--) {
-            $("#questionDetails ul").append('<li>'+data[i].Comments+'<br>'+data[i].CommentDate);
-          };
+            $("#questionDetails ul").append('<li>'
+              +data[i].Comments
+              +'<br>'
+              +data[i].CommentDate);
+            };
           });
           socket.emit('getLatestQuestions');
 
           socket.on('postSuccessful', function(data){
           // this can be from anybody
-          $("#questionDetails ul").append('<li>'+data.Comments+'<br>'+data.CommentDate);
+
+          $('#questionDetails li').first().remove();
+
+          $("#questionDetails ul").prepend('<li>'
+            +data.Comments
+            +'<br>'
+            +data.CommentDate
+            +'</br>');
           });
+       
 
           thirdTabInitlized = true;
         }
@@ -158,7 +169,7 @@
       {
        
         var text = $('textarea#new_message').val();
-        
+
           var question = {
           Comments:text,
           CommentDate:getCurrentDate()

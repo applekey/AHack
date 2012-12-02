@@ -7,7 +7,7 @@
 
       var listOfMarkers = new Array();
 
-      var currentInstitution = 'Waterloo';
+      var currentInstitution = 'UofT';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -72,16 +72,33 @@
       function SetExplainationText(explainationData)
       {
         var organization = explainationData.organziation;
+        var resourceAmount = explainationData.medicalResource;
         var explainHtml= explainationData.explanationHtml;
         var lastTimeUpdated = explainationData.lastTimeUpdated;
 
-        var newHTML = '<hero-unit>'
+        //forDateTime
+       var lastUpdate = new Date(lastTimeUpdated);
+          month = lastUpdate.getMonth()+1;
+          day = lastUpdate.getDate();
+          year = lastUpdate.getFullYear();
+        console.log(lastUpdate);
+
+        var resourceHtml = '<h1>' 
+                          +'<font color="red">$'+resourceAmount+'</font>'
+                          + ' To Spend On Health Care'
+                          + '</h1>';
+
+        var newExplainiationHtml = '<hero-unit>'
         +'<h1>'+organization +'</h1>'
+        +'<br>'
         +'<p>' + explainHtml + '</p>'
-        + '<h3>' + lastTimeUpdated +'</h3>'
+        +'<br>'
+        +'Last Date Updated: '
+        + '<em>' + year+'-'+month+'-'+day+'</em>'
         '</hero-unit>';
       
-        document.getElementById('ExplaninationText').innerHTML = newHTML;
+        document.getElementById('ExplaninationText').innerHTML = newExplainiationHtml;
+        document.getElementById('headerResourceText').innerHTML=resourceHtml; 
       }
 
 /////////////////////////////////////////////////////////////////
@@ -127,10 +144,10 @@
           var recievedLocation = locations[i];
           googleLocations[i] = new google.maps.LatLng(recievedLocation.location[0].xLocation,recievedLocation.location[0].yLocation);
           $("#mapDetails ul").append('<li><div id="myhero" class="hero-unit">'
-            +recievedLocation.Name
-            +'<br>'+recievedLocation.Address
-            +'<br>'+recievedLocation.rating
-            +'<br>'+recievedLocation.waitTime
+            +'Name: '+recievedLocation.Name
+            +'<br>'+'Addr: '+recievedLocation.Address
+            +'<br>'+'Student Rating: '+recievedLocation.rating
+            +'<br>'+'Average Wait Time: '+recievedLocation.waitTime
             +'</div></li>'
             );
         } 

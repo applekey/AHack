@@ -66,6 +66,13 @@ app.get('/make',routes.make);
     CommentDate:Date
     });
 
+   var explainationSchema = new mongoose.Schema({
+      organziation:String,
+      medicalResource:String,
+      explanationHtml:String,
+      lastTimeUpdated: Date
+      });
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -246,13 +253,6 @@ var medical = io.sockets.on('connection', function (socket) {
 
   function getExplaination(currentInstitution,callback)
   {
-     var explainationSchema = new mongoose.Schema({
-      organziation:String,
-      explanationHtml:String,
-      lastTimeUpdated: Date
-      });
-
-
       var Explaination = db.model('Explaination',explainationSchema);
       Explaination.find({organziation:currentInstitution},function(error,results){
       if(error)

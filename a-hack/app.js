@@ -59,6 +59,12 @@ app.get('/medical', routes.medical);
      comments: Array
      });
 
+   var questionSchema = new mongoose.Schema({
+    organziation:String,
+    Comments:String,
+    CommentDate:Date
+    });
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -68,21 +74,23 @@ var medical = io.sockets.on('connection', function (socket) {
 
     socket.on('getExplaination',function(currentInstitution){
       getExplaination(currentInstitution,function(explainations){
-      console.log(explainations);
+      //console.log(explainations);
       socket.emit('explaination',explainations);
       });
     });
 
     socket.on('getMedicalLocations',function(currentInstitution){
       FindMapLocationRecords(currentInstitution,function(medicalLocations){
-      console.log(medicalLocations);
+      //console.log(medicalLocations);
+
       medical.emit('medicalLocations', medicalLocations);
       });
     });
 
     socket.on('getLatestQuestions',function(currentInstitution){
-      getQuestionsAndAnswers(function(questions){
-      console.log(questions);
+      getQuestionsAndAnswers(currentInstitution,function(questions){
+      //console.log(questions);
+      console.log('getlatestQuestions');
       socket.emit('updateFaqs',questions);
       });
     });
@@ -170,11 +178,7 @@ var medical = io.sockets.on('connection', function (socket) {
   //insertMockQuestions();
   function insertMockQuestions()
   {
-    var questionSchema = new mongoose.Schema({
-    Comments:String,
-    CommentDate:Date
-    });
-
+   
     var Questions = db.model('Questions', questionSchema);
     
     var currentTime = new Date()
@@ -184,7 +188,8 @@ var medical = io.sockets.on('connection', function (socket) {
     
     for (var i = 10 ; i >= 0; i--) {
      var myQuestion = new Questions({
-        Comments:'Q: this is the question A: This is the answer',
+        organziation:'Waterloo',
+        Comments:'waterloo meh...',
         CommentDate: currentTime,
       });
 
@@ -197,15 +202,12 @@ var medical = io.sockets.on('connection', function (socket) {
     };
   }
   
-  function getQuestionsAndAnswers(callback)
+  function getQuestionsAndAnswers(currentInstitution,callback)
   {
-    var questionSchema = new mongoose.Schema({
-    Comments:String,
-    CommentDate:Date
-    });
+   
 
     var question = db.model('Questions', questionSchema);
-    var questionsFromDB = question.find().sort('CommentDate').limit(5).exec(function(err,questions)
+    var questionsFromDB = question.find({organziation:currentInstitution}).sort('CommentDate').limit(5).exec(function(err,questions)
       {
         //console.log(questions);  
         callback(questions);
@@ -247,7 +249,7 @@ var medical = io.sockets.on('connection', function (socket) {
 
 
       var Explaination = db.model('Explaination',explainationSchema);
-    Explaination.find({organziation:currentInstitution},function(error,results){
+      Explaination.find({organziation:currentInstitution},function(error,results){
       if(error)
         return;
       callback(results);

@@ -9,9 +9,13 @@
 
       var currentInstitution = 'Waterloo';
 
+//////////////////////////////////////////////////////////////////////////////
       InitlizeSockets();
       function InitlizeSockets()
       {
+         $("#questionDetails").append('<ul>');
+         $("#mapDetails").append('<ul></ul>');
+
         socket.on('explaination',function(data){
           SetExplainationText(data[0]);
           });
@@ -29,7 +33,6 @@
         }); 
 
         socket.on('updateFaqs', function (data) {
-          $("#questionDetails").append('<ul>');
           for (var i = data.length - 1; i >= 0; i--) {
             $("#questionDetails ul").append('<li>'
               +data[i].Comments
@@ -48,7 +51,7 @@
             +data.Comments
             +'<br>'
             +data.CommentDate
-            +'</br>');
+            +'<br>');
           });
       }
     
@@ -82,7 +85,7 @@
 
 /////////////////////////////////////////////////////////////////
       
-      $("#mapDetails").append('<ul></ul>');
+      
       function InitizeSecondTab() {
         if(secondTabInitlized === false)
         {
@@ -167,7 +170,7 @@
         if(thirdTabInitlized === false)
         {
           
-          socket.emit('getLatestQuestions');
+          socket.emit('getLatestQuestions',currentInstitution);
           thirdTabInitlized = true;
         }
       }
@@ -178,6 +181,7 @@
         var text = $('textarea#new_message').val();
 
           var question = {
+          organization:currentInstitution,
           Comments:text,
           CommentDate:getCurrentDate()
         };
@@ -213,6 +217,10 @@
     secondTabInitlized = false;
     thirdTabInitlized = false;
     $("#mapDetails ul").empty();
+    $("#questionDetails ul").empty();
+    InitilizeFirstTab();
+    InitizeSecondTab();
+    InitilizeThirdTab();
   }
 
 

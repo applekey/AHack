@@ -58,8 +58,8 @@ var medical = io.sockets.on('connection', function (socket) {
       });
     });
 
-    socket.on('getExplaination',function(){
-      getExplaination(function(explainations){
+    socket.on('getExplaination',function(currentInstitution){
+      getExplaination(currentInstitution,function(explainations){
       console.log(explainations);
       socket.emit('explaination',explainations);
       });
@@ -72,14 +72,13 @@ var medical = io.sockets.on('connection', function (socket) {
       socket.emit('updateFaqs',questions);
       });
     });
-
+    ////////////////////////////////////////////////////////
     socket.on('postquestion',function(question){
       console.log('questionposted');
       PostQuestion(question,function(){
         io.sockets.emit('postSuccessful',question);
       });
     });
-
   }); 
 
  function PostQuestion(question,callback)
@@ -252,23 +251,24 @@ var medical = io.sockets.on('connection', function (socket) {
       var Explaination = db.model('Explaination', explainationSchema);
       var oneExplaination = new Explaination(
       {
-        organziation:'uoft',
-        explanationHtml:'This is to be stored into the database',
+        organziation:'Waterloo',
+        explanationHtml:'This is to be stored into the database for waterloo',
         lastTimeUpdated:currentTime
       });
       oneExplaination.save();
   }
 
-  //getExplaination();
-  function getExplaination(callback)
+  function getExplaination(currentInstitution,callback)
   {
      var explainationSchema = new mongoose.Schema({
       explanationHtml:String,
       lastTimeUpdated: Date
       });
 
+     console.log(currentInstitution);
+
       var Explaination = db.model('Explaination', explainationSchema);
-    Explaination.find({organziation:'uoft'},function(error,results){
+    Explaination.find({organziation:currentInstitution},function(error,results){
       if(error)
         return;
       callback(results);

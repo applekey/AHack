@@ -15,11 +15,21 @@ head
     body
     .navbar.navbar-fixed-top
       .navbar-inner
-        .container(onclick='window.location.href = \'home\'')
+        .container
           .brand University of Toronto Medical Buddy
+          ul.nav(role='navigation')
+            li.dropdown
+                a#drop1.dropdown-toggle(href='#', role='button', data-toggle='dropdown')
+                  | Dropdown
+                  b.caret
+                ul.dropdown-menu(role='menu', aria-labelledby='drop1')
+                  li
+                    a(tabindex='-1', onclick='javascript:SetInstituation(1)') UofT
+                  li
+                    a(tabindex='-1', onclick='javascript:SetInstituation(2)') Waterloo
+                
     br
     br
-
     .container-fluid
       .row-fluid
         .hero-unit

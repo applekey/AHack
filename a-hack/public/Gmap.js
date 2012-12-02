@@ -6,6 +6,8 @@
       var thirdTabInitlized = false;
 
       var listOfMarkers = new Array();
+
+      var currentInstitution = 'UofT';
     
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -13,17 +15,14 @@
       {
         if(firstTabInitlized === false)
         {
-          
           socket.on('explaination',function(data){
-          console.log(data);
           SetExplainationText(data[0]);
           });
-          socket.emit('getExplaination');
+          socket.emit('getExplaination',currentInstitution);
 
           firstTabInitlized = true;
         }
       }
-
 
       function SetExplainationText(explainationData)
       {
@@ -179,6 +178,35 @@
       }
 
 ////////////////////////////////////////////////////////////////////
+  function SetInstituation(Instituation)
+  { 
+    if(Instituation ===1)
+    {
+      if(currentInstitution !=='UofT')
+      {
+        currentInstitution ='UofT';
+        SetTabIntilizationToFalse();
+      }
+    }
+    if(Instituation ===2)
+    {
+      if(currentInstitution !=='Waterloo')
+      {
+        currentInstitution='Waterloo';
+        SetTabIntilizationToFalse();
+      }
+    }
+      
+  }
+
+  function SetTabIntilizationToFalse()
+  {
+    firstTabInitlized = false;
+    secondTabInitlized = false;
+    thirdTabInitlized = false;
+  }
+
+
   function getCurrentDate()
   {
     var currentTime = new Date()

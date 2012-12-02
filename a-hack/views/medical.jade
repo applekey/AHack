@@ -16,11 +16,13 @@ head
     .navbar.navbar-fixed-top
       .navbar-inner
         .container
-          .brand Medical Buddy
+          .brand(onclick='window.location.href = \'home\'') Medical Buddy
+          img(src='Logo.gif',style='margin-top:3px', alt='Big Boat',width='60px', height='40px')
+
           ul.nav(role='navigation')
             li.dropdown
                 a#drop1.dropdown-toggle(href='#', role='button', data-toggle='dropdown')
-                  | ChooseInstitution
+                  | Choose Institution
                   b.caret
                 ul.dropdown-menu(role='menu', aria-labelledby='drop1')
                   li
@@ -69,7 +71,7 @@ head
                     h1 Benefit Questions
                     #questionDetails  
 
-            .span5
+            .span6
               .hero-unit
                 div(style='width: 100%; height: 600px;')
                   .span4.well

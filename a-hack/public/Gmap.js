@@ -89,15 +89,32 @@
                           + ' To Spend On Health Care'
                           + '</h1>';
 
-        var newExplainiationHtml = '<hero-unit>'
-        +'<h1>'+organization +'</h1>'
-        +'<br>'
-        +'<p>' + explainHtml + '</p>'
-        +'<br>'
-        +'Last Date Updated: '
-        + '<em>' + year+'-'+month+'-'+day+'</em>'
-        '</hero-unit>';
-      
+        if(organization ==='UofT')
+        {
+         var newExplainiationHtml = '<hero-unit>'
+          +'<h1>'+organization +'</h1>'
+                +'<img src="UoT.gif" width="70" height="50">'
+                +'<br>'
+                +'<p>' + explainHtml + '</p>'
+                +'<br>'
+                +'Last Date Updated: '
+                + '<em>' + year+'-'+month+'-'+day+'</em>'
+                '</hero-unit>';
+        }
+        else
+        {
+             var newExplainiationHtml = '<hero-unit>'
+          +'<h1>'+organization +'</h1>'
+          +'<img src="Waterloo.gif" width="70" height="50">'
+          +'<br>'
+          +'<p>' + explainHtml + '</p>'
+          +'<br>'
+          +'Last Date Updated: '
+          + '<em>' + year+'-'+month+'-'+day+'</em>'
+          '</hero-unit>';
+        }
+
+       
         document.getElementById('ExplaninationText').innerHTML = newExplainiationHtml;
         document.getElementById('headerResourceText').innerHTML=resourceHtml; 
       }
@@ -144,7 +161,7 @@
           
           var popUPInformation = {
             googleLocation:new google.maps.LatLng(recievedLocation.location[0].xLocation,recievedLocation.location[0].yLocation),
-            contactInformation:'6477873234'
+            contactInformation:'ff6fff477873234'
           };
 
           pinuplocation[i] = popUPInformation;
@@ -166,6 +183,7 @@
         title:"Hello World!"
         });
         marker.setMap(map);
+        console.log(location);
 
         // push the marker
         listOfMarkers.push(marker);
@@ -173,12 +191,13 @@
         google.maps.event.addListener(marker, 'click', function() {
         map.setZoom(17);
         map.setCenter(marker.getPosition());
-        SetupWindow(marker);
+        SetupWindow(marker,location.contactInformation);
         });
       }
       
-      function SetupWindow(marker){
-      var infoWindowContent = "<h1>Address:</h1>";
+      function SetupWindow(marker,infoForScreen){
+      console.log(infoForScreen);
+      var infoWindowContent = "<h3>6477858355</h3>";
       var infowindow = new google.maps.InfoWindow();
       infowindow.setContent(infoWindowContent);
       

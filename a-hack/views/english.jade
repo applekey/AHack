@@ -10,17 +10,20 @@ html
   .navbar.navbar-fixed-top
       .navbar-inner
         .container
-          .brand Medical Buddy
+          .brand(onclick='window.location.href = \'home\'') Medical Buddy
+          img(src='Logo.gif',style='margin-top:2px', alt='Big Boat',width='60px', height='70px')
 
   br
   br
   .container-fluid
     .row-fluid
       .hero-unit(onclick='window.location.href = \'medical\'') 
-        h1 Emergency    
+        h1 Emergency
+        img(src='Emergency.gif',style='margin-top:2px', alt='Big Boat',width='60px', height='70px')    
     .row-fluid
       .hero-unit(onclick='window.location.href = \'medical\'')
         h1 Dental
+        img(src='Dental.gif',style='margin-top:2px', alt='Big Boat',width='60px', height='70px')
     .row-fluid
       .hero-unit(onclick='window.location.href = \'medical\'') 
         h1 Other  

@@ -6,6 +6,7 @@
       var thirdTabInitlized = false;
 
       var listOfMarkers = new Array();
+      var currentOpenInfoWindow;
 
       var currentInstitution = 'UofT';
 
@@ -107,6 +108,10 @@
       function InitizeSecondTab() {
         if(secondTabInitlized === false)
         {
+            // refresh the list
+            listOfMarkers = new Array();
+            currentOpenInfoWindow = null;
+
             var mapOptions = {
             center: new google.maps.LatLng(43.6617, -79.3951),
             zoom: 16,
@@ -117,15 +122,9 @@
             mapOptions);
 
             
-            //$("#mapDetails ul").empty();
-            
-            // create the request
-      
-
             socket.emit('getMedicalLocations',currentInstitution);
 
             $("#mapDetails li").live('click', function(e) { 
-              console.log($(this).index());
               var listIndex = $(this).index();
               ActivateMarker(listIndex);
               window.location.href = '#BottomOfMap';
@@ -165,8 +164,8 @@
         listOfMarkers.push(marker);
        
         google.maps.event.addListener(marker, 'click', function() {
-        //map.setZoom(17);
-        //map.setCenter(marker.getPosition());
+        map.setZoom(17);
+        map.setCenter(marker.getPosition());
         SetupWindow(marker);
         });
       }
@@ -175,8 +174,12 @@
       var infoWindowContent = "<h1>Address:</h1>";
       var infowindow = new google.maps.InfoWindow();
       infowindow.setContent(infoWindowContent);
-      infowindow.open(map, marker);
+      
+      if(currentOpenInfoWindow !=null)
+        currentOpenInfoWindow.close();
 
+      currentOpenInfoWindow = infowindow;
+      infowindow.open(map, marker);
       }
 
       function ActivateMarker(infoWindowNumber)
@@ -246,13 +249,23 @@
     InitilizeThirdTab();
   }
 
+  function closeAllPreviousMarkers()
+  {
+    if(listOfMarkers.length >0)
+    {
+      for (var i = 0; i <listOfMarkers.length; i++) {
+        listOfMarkers[i].close
+      };
+    }
+  }
+
 
   function getCurrentDate()
   {
-    var currentTime = new Date()
-    var month = currentTime.getMonth() + 1
-    var day = currentTime.getDate()
-    var year = currentTime.getFullYear()
+    var currentTime = new Date();
+    var month = currentTime.getMonth() + 1;
+    var day = currentTime.getDate();
+    var year = currentTime.getFullYear();
     return currentTime;
   }
 

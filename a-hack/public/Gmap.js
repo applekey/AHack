@@ -13,11 +13,13 @@
       {
         if(firstTabInitlized === false)
         {
-          socket.emit('getExplaination');
+          
           socket.on('explaination',function(data){
           console.log(data);
           SetExplainationText(data[0]);
           });
+          socket.emit('getExplaination');
+
           firstTabInitlized = true;
         }
       }
@@ -54,7 +56,6 @@
             $("#mapDetails").append('<ul>');
             
             // create the request
-            socket.emit('getMedicalLocations');
             var result = socket.on('medicalLocations', function (data) {
             CreateGoogleLocations(data, function(error,result){
                if(!error)
@@ -66,6 +67,8 @@
                }
               });
             }); 
+
+            socket.emit('getMedicalLocations');
 
             $("#mapDetails li").live('click', function(e) { 
               console.log($(this).index());
@@ -127,10 +130,52 @@
         if(typeof marker ==='undefined')
           return;
         SetupWindow(marker);
+      } 
+
+/////////////////////////////////////////////////////////////////      
+      function InitilizeThirdTab(){
+
+        if(thirdTabInitlized === false)
+        {
+          socket.on('updateFaqs', function (data) {
+          $("#questionDetails").append('<ul>');
+          for (var i = data.length - 1; i >= 0; i--) {
+            $("#questionDetails ul").append('<li>'+data[i].Comments+'<br>'+data[i].CommentDate);
+          };
+          });
+          socket.emit('getLatestQuestions');
+
+          socket.on('postSuccessful', function(data){
+          // this can be from anybody
+          $("#questionDetails ul").append('<li>'+data.Comments+'<br>'+data.CommentDate);
+          });
+
+          thirdTabInitlized = true;
+        }
       }
 
-      
-      $('a[data-toggle="tab"]').on('shown', function (e) {
+      function PostQuestion()
+      {
+         var mockQuestion = {
+          Comments:'comments',
+          CommentDate:getCurrentDate()
+        };
+
+        socket.emit('postquestion',mockQuestion);
+      }
+
+////////////////////////////////////////////////////////////////////
+  function getCurrentDate()
+  {
+    var currentTime = new Date()
+    var month = currentTime.getMonth() + 1
+    var day = currentTime.getDate()
+    var year = currentTime.getFullYear()
+    return currentTime;
+  }
+
+
+ $('a[data-toggle="tab"]').on('shown', function (e) {
       var href = e.target.href;
         if(href.substr(href.length - 1)==='3')
         {
@@ -149,24 +194,6 @@
 
         }
       })
-
-      
-
-/////////////////////////////////////////////////////////////////      
-      function InitilizeThirdTab(){
-
-        if(thirdTabInitlized === false)
-        {
-          socket.on('updateFaqs', function (data) {
-          $("#questionDetails").append('<ul>');
-          for (var i = data.length - 1; i >= 0; i--) {
-            $("#questionDetails ul").append('<li>'+data[i].Comments+'<br>'+data[i].CommentDate);
-          };
-          });
-          socket.emit('getLatestQuestions');
-          thirdTabInitlized = true;
-        }
-      }
 
 
 

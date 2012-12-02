@@ -39,15 +39,15 @@ app.get('/english', routes.english);
 app.get('/medical', routes.medical);
 
 io.set('log level',1);
- var testLocations = Array();
-      testLocations[0] = {x:43.6617, y:-79.3951};
-      testLocations[1] = {x:43.6517, y:-79.3951};
-      testLocations[2] = {x:43.6217, y:-79.3951};
-      testLocations[3] = {x:43.6617, y:-79.3951};
-      testLocations[4] = {x:43.6317, y:-79.3951};
+ // var testLocations = Array();
+ //      testLocations[0] = {x:43.6617, y:-79.3951};
+ //      testLocations[1] = {x:43.6517, y:-79.3951};
+ //      testLocations[2] = {x:43.6217, y:-79.3951};
+ //      testLocations[3] = {x:43.6617, y:-79.3951};
+ //      testLocations[4] = {x:43.6317, y:-79.3951};
 
 
-var db =  mongoose.connect('mongodb://applekey:poppy222@alex.mongohq.com:10041/applekeyTest');
+var db = mongoose.connect('mongodb://applekey:poppy222@alex.mongohq.com:10041/applekeyTest');
 
 var medical = io.sockets.on('connection', function (socket) {
 
@@ -73,7 +73,29 @@ var medical = io.sockets.on('connection', function (socket) {
       });
     });
 
+    socket.on('postquestion',function(question){
+      console.log('questionposted');
+      PostQuestion(question,function(){
+        io.sockets.emit('postSuccessful',question);
+      });
+    });
+
   }); 
+
+ function PostQuestion(question,callback)
+ {
+    var questionSchema = new mongoose.Schema({
+    Comments:String,
+    CommentDate:Date
+    });
+    var Question = db.model('Questions', questionSchema);
+    newQuestion = new Question({
+      Comments:question.Comments,
+      CommentDate:question.CommentDate
+    });
+    newQuestion.save();
+    callback();
+ }
 
  function UpdateLog()
  {

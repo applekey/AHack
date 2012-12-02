@@ -156,12 +156,15 @@
 
       function PostQuestion()
       {
-         var mockQuestion = {
-          Comments:'comments',
+       
+        var text = $('textarea#new_message').val();
+        
+          var question = {
+          Comments:text,
           CommentDate:getCurrentDate()
         };
 
-        socket.emit('postquestion',mockQuestion);
+        socket.emit('postquestion',question);
       }
 
 ////////////////////////////////////////////////////////////////////

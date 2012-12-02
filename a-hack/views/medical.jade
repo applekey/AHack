@@ -16,7 +16,7 @@ head
     .navbar.navbar-fixed-top
       .navbar-inner
         .container
-          .brand University of Toronto Medical Buddy
+          .brand Medical Buddy
           ul.nav(role='navigation')
             li.dropdown
                 a#drop1.dropdown-toggle(href='#', role='button', data-toggle='dropdown')
@@ -51,28 +51,34 @@ head
                 #ExplaninationText
         #2.tab-pane
           .row-fluid
+            .span7
+              div(style='width: 700px; height: 550px;').affix
+                #map_canvas(style='width: 100%; height: 60%;')
+            .span3
               div(style='width: 100%; height: 450px;')
                 #mapDetails
                 a(name='BottomOfMap')
-                #map_canvas(style='width: 100%; height: 60%;')
                 
-                
-                
-              
+
         #3.tab-pane
           .row-fluid
-           .hero-unit
-                h1 Questions and Comments
-                #questionDetails  
+            .span4
+               .hero-unit 
+                  div(style='width: 100%; height: 600px;')
+                    h1 Benefit Questions
+                    #questionDetails  
 
-            .hero-unit
-              div(style='width: 100%; height: 450px;')
-                .span4.well
-                  form(accept-charset='UTF-8', action='', method='POST')
-                      textarea#new_message.span4(name='new_message', placeholder='Message to send', rows='5',style='width: 445px; height: 418px;')
-                      h6.pull-right 320 characters remaining
-                      .btn.btn-info(onclick='javascript:PostQuestion()') Post New Message
-                br
+            .span6
+              .hero-unit
+                div(style='width: 100%; height: 600px;')
+                  .span4.well
+                    form(accept-charset='UTF-8', action='', method='POST')
+                        textarea#new_message.span4(name='new_message', placeholder='Message to send', rows='5',style='width: 445px; height: 418px;')
+                        h6.pull-right 320 characters remaining
+                        .btn.btn-info(onclick='javascript:PostQuestion()') Post New Message
+                  br
+          
+          
                               
         br
 

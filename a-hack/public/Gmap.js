@@ -10,6 +10,7 @@
       var currentInstitution = 'Waterloo';
 
 //////////////////////////////////////////////////////////////////////////////
+
       InitlizeSockets();
       function InitlizeSockets()
       {
@@ -45,7 +46,7 @@
         socket.on('postSuccessful', function(data){
           // this can be from anybody
 
-          $('#questionDetails li').first().remove();
+          $('#questionDetails li').last().remove();
 
           $("#questionDetails ul").prepend('<li>'
             +data.Comments
@@ -125,7 +126,12 @@
         {
           var recievedLocation = locations[i];
           googleLocations[i] = new google.maps.LatLng(recievedLocation.location[0].xLocation,recievedLocation.location[0].yLocation);
-          $("#mapDetails ul").append('<li>'+i+'</li>'
+          $("#mapDetails ul").append('<li><div id="myhero" class="hero-unit">'
+            +recievedLocation.Name
+            +'<br>'+recievedLocation.Address
+            +'<br>'+recievedLocation.rating
+            +'<br>'+recievedLocation.waitTime
+            +'</div></li>'
             );
         } 
         callback(null,googleLocations);

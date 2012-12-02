@@ -34,6 +34,7 @@ app.configure('development', function() {
 app.get('/home', routes.index);
 app.get('/english', routes.english);
 app.get('/medical', routes.medical);
+app.get('/make',routes.make);
 
 
  var testLocations = Array();
@@ -101,7 +102,14 @@ var medical = io.sockets.on('connection', function (socket) {
         io.sockets.emit('postSuccessful',question);
       });
     });
+    ///////////////////////////////////////////////////////////
+    socket.on('makePost',function(newInstitution){
+      console.log(newInstitution);
+    });
+
   }); 
+  /////////////////////////////////////////////////////////
+
 
  function PostQuestion(question,callback)
  {

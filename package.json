@@ -1,0 +1,14 @@
+{
+    "name": "Medical-Buddy", 
+    "version": "0.0.1", 
+    "dependencies": {
+      "express": "3.0.3",
+       "jade": "0.27.7", 
+       "mongoose": "3.4.0",
+       "socket.io": "0.9.11"
+     },
+   "engines": {
+    "node": "0.8.x",
+    "npm": "1.1.x"
+  }
+}

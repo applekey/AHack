@@ -1,0 +1,106 @@
+!!! 5
+html
+head
+    title= title
+    link(rel='stylesheet', href='/libs/bootstrap/css/cosmo.bootstrap.min.css')
+    link(rel='stylesheet', href='/libs/bootstrap/css/bootstrap-responsive.min.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    meta(name='viewport', content='initial-scale=1.0, user-scalable=no')
+    
+    style(type='text/css')
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+     
+      
+    body(onload= 'javascript:InitilizeFirstTab()')
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container
+          .brand(onclick='window.location.href = \'home\'') Medical Buddy
+          img(src='Logo.gif',style='margin-top:3px', alt='Big Boat',width='60px', height='40px')
+
+          ul.nav(role='navigation')
+            li.dropdown
+                a#drop1.dropdown-toggle(href='#', role='button', data-toggle='dropdown')
+                  | Choose Institution
+                  b.caret
+                ul.dropdown-menu(role='menu', aria-labelledby='drop1')
+                  li
+                    a(tabindex='-1', onclick='javascript:SetInstituation(1)') UofT
+                  li
+                    a(tabindex='-1', onclick='javascript:SetInstituation(2)') Waterloo
+                
+    br
+    br
+    .container-fluid
+      .row-fluid
+        .hero-unit  
+             h1#headerResourceText Its Canada Boys and Girls
+
+    .tabbable
+    ul.nav.nav-tabs
+        li.active
+          a(href='#1', data-toggle='tab') What I Am Entited To
+        li
+          a(href='#2', data-toggle='tab') Hospital Locations
+        li
+          a(href='#3', data-toggle='tab') Ask A Question
+      .tab-content
+        #1.tab-pane.active
+          .row-fluid
+            .hero-unit
+              div(style='width: 100%; height: 450px;')
+                #ExplaninationText
+        #2.tab-pane
+          .row-fluid
+            .span7
+              div(style='width: 700px; height: 550px;').affix
+                #map_canvas(style='width: 100%; height: 60%;')
+            .span4
+              div(style='width: 100%; height: 450px;')
+                #mapDetails
+                a(name='BottomOfMap')
+                
+
+        #3.tab-pane
+          .row-fluid
+            .span6
+               .hero-unit 
+                  div(style='width: 100%; height: 600px;')
+                    br
+                    h1 Benefit Questions
+                    #questionDetails  
+
+            .span6
+              .hero-unit
+                div(style='width: 100%; height: 600px;')
+                  .span4.well
+                    form(accept-charset='UTF-8', action='', method='POST')
+                        textarea#new_message.span4(name='new_message', placeholder='Message to send', rows='5',style='width: 445px; height: 418px;')
+                        h6.pull-right 320 characters remaining
+                        .btn.btn-info(onclick='javascript:PostQuestion()') Post New Message
+                  br
+          
+          
+                              
+        br
+
+        #details
+      
+         
+
+
+    script(src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js")
+    script(src="/libs/bootstrap/js/bootstrap.min.js")
+    script(src="/libs/sugarjs/sugar.min.js")
+    script(type='text/javascript', src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBpEkROYcksrdtDKzOP-1hwGlK8Vbx7KjE&sensor=false')
+   
+    script(src='/socket.io/socket.io.js')
+    script(type='text/javascript', src='/Gmap.js')
+
+   
+    
+   
+           
+ 
+  
